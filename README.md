@@ -14,6 +14,12 @@ nvm use
 npm install
 ```
 
+## Format code
+
+```bash
+npm run format
+```
+
 ## Testing
 
 Test watcher
