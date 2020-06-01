@@ -1,8 +1,6 @@
 import { Component } from '@angular/core'
-
+import { Plugins, StatusBarStyle, Capacitor } from '@capacitor/core'
 import { Platform } from '@ionic/angular'
-import { SplashScreen } from '@ionic-native/splash-screen/ngx'
-import { StatusBar } from '@ionic-native/status-bar/ngx'
 
 @Component({
   selector: 'app-root',
@@ -12,15 +10,18 @@ import { StatusBar } from '@ionic-native/status-bar/ngx'
 export class AppComponent {
   constructor(
     private platform: Platform,
-    private splashScreen: SplashScreen,
-    private statusBar: StatusBar,
   ) {
     this.initializeApp()
   }
 
   private async initializeApp() {
     await this.platform.ready()
-    this.statusBar.styleDefault()
-    this.splashScreen.hide()
+
+    if (Capacitor.isPluginAvailable('StatusBar')) {
+      Plugins.StatusBar.setStyle({ style: StatusBarStyle.Dark })
+    }
+    if (Capacitor.isPluginAvailable('SplashScreen')) {
+      Plugins.SplashScreen.hide()
+    }
   }
 }

@@ -1,8 +1,12 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
 import { TestBed, async, ComponentFixture } from '@angular/core/testing'
+import {
+  Plugins,
+  StatusBarStyle,
+  SplashScreenPlugin,
+  StatusBarPlugin,
+} from '@capacitor/core'
 import { Platform } from '@ionic/angular'
-import { SplashScreen } from '@ionic-native/splash-screen/ngx'
-import { StatusBar } from '@ionic-native/status-bar/ngx'
 
 import { configureTests, createSpyObj } from '@tests/test-config.helper'
 import { AppComponent } from './app.component'
@@ -10,6 +14,8 @@ import { AppComponent } from './app.component'
 describe('AppComponent', () => {
   let component: AppComponent
   let fixture: ComponentFixture<AppComponent>
+  let originalSplashScreen: SplashScreenPlugin
+  let originalStatusBar: StatusBarPlugin
   const platformStub = {
     ready: (): Promise<string> => Promise.resolve('ready'),
     platforms: (): string[] => ['mobile'],
@@ -17,13 +23,16 @@ describe('AppComponent', () => {
   }
 
   beforeEach(async(() => {
+    originalSplashScreen = Plugins.SplashScreen
+    originalStatusBar = Plugins.StatusBar
+    Plugins.StatusBar = createSpyObj<StatusBarPlugin>(['setStyle'])
+    Plugins.SplashScreen = createSpyObj<SplashScreenPlugin>(['hide'])
+
     configureTests((testBed) => {
       testBed.configureTestingModule({
         declarations: [AppComponent],
         schemas: [CUSTOM_ELEMENTS_SCHEMA],
         providers: [
-          { provide: StatusBar, useValue: createSpyObj<StatusBar>(['styleDefault']) },
-          { provide: SplashScreen, useValue: createSpyObj<SplashScreen>(['hide']) },
           { provide: Platform, useValue: createSpyObj<Platform>(platformStub) },
         ],
       })
@@ -37,6 +46,9 @@ describe('AppComponent', () => {
   afterEach(() => {
     fixture?.destroy()
     component = null
+
+    Plugins.StatusBar = originalStatusBar
+    Plugins.SplashScreen = originalSplashScreen
   })
 
   it('should create the app', () => {
@@ -50,10 +62,12 @@ describe('AppComponent', () => {
     const platform = TestBed.inject(Platform)
     expect(platform.ready).toHaveBeenCalled()
     await platform.ready()
-    const statusBar = TestBed.inject(StatusBar)
-    expect(statusBar.styleDefault).toHaveBeenCalled()
-    const splashScreen = TestBed.inject(SplashScreen)
-    expect(splashScreen.hide).toHaveBeenCalled()
+
+
+    expect(Plugins.StatusBar.setStyle).toHaveBeenCalledWith({
+      style: StatusBarStyle.Dark,
+    })
+    expect(Plugins.SplashScreen.hide).toHaveBeenCalled()
   })
 
   // TODO: add more tests!
