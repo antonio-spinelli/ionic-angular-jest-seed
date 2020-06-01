@@ -8,6 +8,24 @@ Node 10.20.1
 nvm use
 ```
 
+## Installation
+
+```bash
+npm install
+```
+
+## Testing
+
+Test watcher
+```bash
+npm test
+```
+
+Code coverage report
+```bash
+npm test:coverage
+```
+
 ## License
 
 [License](./LICENSE)
