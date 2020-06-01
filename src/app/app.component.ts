@@ -18,10 +18,9 @@ export class AppComponent {
     this.initializeApp()
   }
 
-  initializeApp() {
-    this.platform.ready().then(() => {
-      this.statusBar.styleDefault()
-      this.splashScreen.hide()
-    })
+  private async initializeApp() {
+    await this.platform.ready()
+    this.statusBar.styleDefault()
+    this.splashScreen.hide()
   }
 }

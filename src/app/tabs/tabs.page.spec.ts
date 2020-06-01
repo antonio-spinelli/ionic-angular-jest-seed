@@ -1,6 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
-import { async, ComponentFixture, TestBed } from '@angular/core/testing'
+import { async, ComponentFixture } from '@angular/core/testing'
 
+import { configureTests } from '@tests/test-config.helper'
 import { TabsPage } from './tabs.page'
 
 describe('TabsPage', () => {
@@ -8,16 +9,21 @@ describe('TabsPage', () => {
   let fixture: ComponentFixture<TabsPage>
 
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [TabsPage],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    }).compileComponents()
+    configureTests((testBed) => {
+      testBed.configureTestingModule({
+        declarations: [TabsPage],
+        schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      })
+    }).then((testBed) => {
+      fixture = testBed.createComponent(TabsPage)
+      component = fixture.componentInstance
+      fixture.detectChanges()
+    })
   }))
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(TabsPage)
-    component = fixture.componentInstance
-    fixture.detectChanges()
+  afterEach(() => {
+    fixture?.destroy()
+    component = null
   })
 
   it('should create', () => {
